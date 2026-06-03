@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <h1>&#128176; Group Expense Tracker</h1>
+            <p>Track shared spending, balances, and member contributions.</p>
+        </header>
+
+        <section id="loginSection" class="section active" aria-label="Login">
+            <div class="card narrow-card">
+                <div class="auth-tabs" role="tablist" aria-label="Account forms">
+                    <button id="showLoginBtn" class="auth-tab active" type="button">Login</button>
+                    <button id="showSignupBtn" class="auth-tab" type="button">Sign Up</button>
+                </div>
+
+                <div id="loginPanel">
+                <h2>Login to Continue</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginName">Your Name</label>
+                        <input type="text" id="loginName" required maxlength="60" autocomplete="username" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required minlength="4" autocomplete="current-password" placeholder="Enter your password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                </div>
+
+                <div id="signupPanel" hidden>
+                <h2>Create Account</h2>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupName">Your Name</label>
+                        <input type="text" id="signupName" required maxlength="60" autocomplete="name" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" required minlength="4" autocomplete="new-password" placeholder="Minimum 4 characters">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupRole">Role</label>
+                        <select id="signupRole" required>
+                            <option value="member">Regular Member</option>
+                            <option value="holder">Main Account Holder</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+                </div>
+                <div id="authStatus" class="status-message" role="status" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <section id="dashboardSection" class="section" aria-label="Dashboard">
+            <div class="dashboard-header">
+                <h2>Welcome, <span id="userNameDisplay"></span></h2>
+                <button id="logoutBtn" class="btn btn-secondary" type="button">Logout</button>
+            </div>
+
+            <div class="card">
+                <h3>&#10133; Add New Expense</h3>
+                <form id="expenseForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expenseAmount">Amount (&#8377;)</label>
+                            <input type="number" id="expenseAmount" required min="0.01" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="expenseCategory">Category</label>
+                            <select id="expenseCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="food">Food & Dining</option>
+                                <option value="transport">Transportation</option>
+                                <option value="accommodation">Accommodation</option>
+                                <option value="entertainment">Entertainment</option>
+                                <option value="shopping">Shopping</option>
+                                <option value="utilities">Utilities</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseDescription">Description</label>
+                        <textarea id="expenseDescription" required rows="3" maxlength="250" placeholder="Why did you spend this amount?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseDate">Date</label>
+                        <input type="date" id="expenseDate" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Expense</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>&#128202; Expense Summary</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <h4>Total Expenses</h4>
+                        <p class="amount" id="totalExpenses">&#8377;0.00</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Initial Balance</h4>
+                        <p class="amount" id="initialBalance">&#8377;0.00</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Remaining Balance</h4>
+                        <p class="amount remaining" id="remainingBalance">&#8377;0.00</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Total Members</h4>
+                        <p class="count" id="totalMembers">0</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Registered Members</h4>
+                        <p class="count" id="registeredMembers">0</p>
+                    </div>
+                    <div class="summary-item">
+                        <h4>Member Limit</h4>
+                        <p class="count" id="memberLimitDisplay">No limit</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>&#128203; Individual Member Expenses</h3>
+                <div class="table-container">
+                    <table id="memberTable">
+                        <thead>
+                            <tr>
+                                <th>Member Name</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody id="memberTableBody">
+                            <tr>
+                                <td colspan="5" class="no-data">No expenses added yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="holderSection" class="card holder-card" hidden>
+                <h3>&#128081; Main Account Holder Controls</h3>
+                <div class="form-row align-end balance-row">
+                    <div class="form-group">
+                        <label for="initialBalanceInput">Initial Account Balance</label>
+                        <input type="number" id="initialBalanceInput" min="0" step="0.01" placeholder="Enter initial balance">
+                    </div>
+                    <div class="form-group">
+                        <label for="balancePassword">Confirm Password</label>
+                        <input type="password" id="balancePassword" autocomplete="current-password" placeholder="Required to change balance">
+                    </div>
+                    <button id="setBalanceBtn" class="btn btn-primary" type="button">Set Balance</button>
+                </div>
+                <p id="balanceLockNotice" class="helper-text"></p>
+                <div class="form-row align-end member-limit-row">
+                    <div class="form-group">
+                        <label for="memberLimitInput">Allowed Regular Members</label>
+                        <input type="number" id="memberLimitInput" min="0" step="1" placeholder="Leave empty for no limit">
+                    </div>
+                    <div class="form-group">
+                        <label for="memberLimitPassword">Confirm Password</label>
+                        <input type="password" id="memberLimitPassword" autocomplete="current-password" placeholder="Required to change limit">
+                    </div>
+                    <button id="setMemberLimitBtn" class="btn btn-primary" type="button">Set Limit</button>
+                </div>
+                <p id="memberLimitNotice" class="helper-text"></p>
+                <div class="form-row align-end email-row">
+                    <div class="form-group">
+                        <label for="holderEmail">Email Summary To</label>
+                        <input type="email" id="holderEmail" placeholder="accountholder@email.com">
+                    </div>
+                    <button id="sendSummaryBtn" class="btn btn-success" type="button">&#128231; Prepare Email</button>
+                </div>
+                <div id="sendStatus" class="status-message" role="status" aria-live="polite"></div>
+            </div>
+
+            <button id="exportBtn" class="btn btn-success" type="button">&#128229; Export Summary as Report</button>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
